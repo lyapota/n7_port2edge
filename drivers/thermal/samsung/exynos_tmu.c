@@ -96,6 +96,8 @@ struct exynos_tmu_data {
 /* list of multiple instance for each thermal sensor */
 static LIST_HEAD(dtm_dev_list);
 
+static int arg_tmu_cooling = 0;
+
 /*
  * TMU treats temperature as a mapped temperature code.
  * The temperature is converted differently depending on the calibration type.
@@ -1118,6 +1120,8 @@ static int exynos_map_dt_data(struct platform_device *pdev)
 		of_property_read_u32(pdev->dev.of_node, node_name, &value);
 		if (!value)
 			dev_err(&pdev->dev, "No trigger_level data\n");
+		if (i > 0 && value < 105 && (pdata->d_type == CLUSTER0 || pdata->d_type == CLUSTER1 || pdata->d_type == GPU))
+			value += arg_tmu_cooling;
 		pdata->trigger_levels[i] = value;
 
 		snprintf(node_name, sizeof(node_name), "trigger_enable_%d", i);
@@ -1144,9 +1148,12 @@ static int exynos_map_dt_data(struct platform_device *pdev)
 
 		snprintf(node_name, sizeof(node_name), "cooling_level_%d", i);
 		of_property_read_u32(pdev->dev.of_node, node_name,
-						&pdata->freq_tab[i].temp_level);
-		if (!pdata->freq_tab[i].temp_level)
+						&value);
+		if (!value)
 			dev_err(&pdev->dev, "No cooling temp level data\n");
+		if (i > 0 && value < 105 && (pdata->d_type == CLUSTER0 || pdata->d_type == CLUSTER1 || pdata->d_type == GPU))
+			value += arg_tmu_cooling;
+		pdata->freq_tab[i].temp_level = value;
 	}
 
 	pdata->hotplug_enable = of_property_read_bool(pdev->dev.of_node, "hotplug_enable");
@@ -1240,6 +1247,7 @@ static int exynos_tmu_ect_set_information(struct platform_device *pdev)
 	struct exynos_tmu_platform_data *pdata = data->pdata;
 	struct ect_ap_thermal_function *function;
 	int hotplug_threshold = 0, hotplug_flag = 0;
+	u32 value;
 
 	if (pdata->tmu_name == NULL)
 		return 0;
@@ -1258,7 +1266,10 @@ static int exynos_tmu_ect_set_information(struct platform_device *pdev)
 
 	/* setting trigger */
 	for (i = 0; i < function->num_of_range; ++i) {
-		pdata->trigger_levels[i] = function->range_list[i].lower_bound_temperature;
+		value = function->range_list[i].lower_bound_temperature;
+		if (i > 0 && value < 105 && (pdata->d_type == CLUSTER0 || pdata->d_type == CLUSTER1 || pdata->d_type == GPU))
+			value += arg_tmu_cooling;
+		pdata->trigger_levels[i] = value;
 		pdata->trigger_enable[i] = true;
 
 		if (function->range_list[i].sw_trip)
@@ -1266,7 +1277,14 @@ static int exynos_tmu_ect_set_information(struct platform_device *pdev)
 		else
 			pdata->trigger_type[i] = (i == function->num_of_range - 1 ? HW_TRIP : THROTTLE_ACTIVE);
 
-		pdata->freq_tab[i].temp_level = function->range_list[i].lower_bound_temperature;
+		if (pdata->d_type == CLUSTER1 && function->range_list[i].max_frequency == 2704000)
+ 			function->range_list[i].max_frequency = -1;
+		if (pdata->d_type == CLUSTER0 && function->range_list[i].max_frequency == 1586000)
+ 			function->range_list[i].max_frequency = -1;
+		if (pdata->d_type == GPU && function->range_list[i].max_frequency == 650000)
+ 			function->range_list[i].max_frequency = -1;
+ 
+		pdata->freq_tab[i].temp_level = value;
 		pdata->freq_tab[i].freq_clip_max = function->range_list[i].max_frequency;
 		dev_info(&pdev->dev, "[%d] Temp_level : %d, freq_clip_max: %d \n",
 			i, pdata->freq_tab[i].temp_level, pdata->freq_tab[i].freq_clip_max);
@@ -1427,7 +1445,10 @@ static int exynos_tmu_probe(struct platform_device *pdev)
 	/* Register the sensor with thermal management interface */
 	ret = exynos_register_thermal(sensor_conf);
 	if (ret) {
-		dev_err(&pdev->dev, "Failed to register thermal interface\n");
+		if (ret != -EPROBE_DEFER)
+			dev_err(&pdev->dev,
+				"Failed to register thermal interface: %d\n",
+				ret);
 		goto err;
 	}
 	data->reg_conf = sensor_conf;
@@ -1543,6 +1564,15 @@ static struct platform_driver exynos_tmu_driver = {
 	.probe = exynos_tmu_probe,
 	.remove	= exynos_tmu_remove,
 };
+
+static int __init tmu_read_cooling(char *str)
+{
+	get_option(&str, &arg_tmu_cooling);
+	if (arg_tmu_cooling)
+		arg_tmu_cooling = arg_tmu_cooling * 5;
+	return 1;
+}
+__setup("tmu_cool=", tmu_read_cooling);
 
 module_platform_driver(exynos_tmu_driver);
 

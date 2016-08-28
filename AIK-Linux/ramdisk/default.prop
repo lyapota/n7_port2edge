@@ -1,0 +1,36 @@
+#
+# ADDITIONAL_DEFAULT_PROPERTIES
+#
+telephony.lteOnCdmaDevice=0
+rild.libpath=/system/lib64/libsec-ril.so
+rild.libpath2=/system/lib64/libsec-ril-dsds.so
+persist.security.ams.enforcing=0
+ro.secure=0
+ro.allow.mock.location=0
+ro.debuggable=1
+ro.adb.secure=0
+persist.sys.usb.config=mtp
+ro.zygote=zygote64_32
+dalvik.vm.image-dex2oat-Xms=64m
+dalvik.vm.image-dex2oat-Xmx=64m
+dalvik.vm.dex2oat-Xms=64m
+dalvik.vm.dex2oat-Xmx=512m
+ro.dalvik.vm.native.bridge=0
+debug.atrace.tags.enableflags=0
+persist.sys.strict_op_enable=false
+persist.sys.whitelist=/system/etc/whitelist_appops.xml
+
+#
+# BOOTIMAGE_BUILD_PROPERTIES
+#
+ro.bootimage.build.date=Thu Aug 11 22:07:05 KST 2016
+ro.bootimage.build.date.utc=1470920825
+ro.bootimage.build.fingerprint=samsung/graceltexx/gracelte:6.0.1/MMB29K/N930FXXU1BPH6:user/test-keys
+
+# SECURITY_PROPERTIES BY J.C.
+ro.config.tima=0
+ro.config.dmverity=false
+ro.config.rkp=false
+ro.config.kap=false
+ro.sec.fle.encryption=false
+ro.securestorage.support=false
