@@ -2707,6 +2707,37 @@ static unsigned int hmp_down_threshold = 256;
 static unsigned int hmp_semiboost_up_threshold = 479;
 static unsigned int hmp_semiboost_down_threshold = 150;
 
+#ifdef CONFIG_SCHED_HMP_DOWN_MIGRATION_COMPENSATION
+#include <linux/pm_qos.h>
+#include <linux/irq_work.h>
+static void hmp_do_dwcompensation(int cpu, unsigned long load);
+static void hmp_dwcompensation_update_thr(void);
+
+typedef enum {
+	DWCOM_LV_HIGH,
+	DWCOM_LV_MID,
+	DWCOM_LV_LOW,
+	DWCOM_LV_END,
+} dwcomp_level;
+
+struct dwcom_dat {
+	struct pm_qos_request pm_qos;
+	int freq;
+	int threshold;
+};
+
+static struct {
+	struct workqueue_struct *workqueue;
+	struct work_struct work;
+	struct irq_work irq_work;
+	struct dwcom_dat data[DWCOM_LV_END];
+	int enabled;
+	int timeout;
+	int threshold;
+	unsigned int last_lv;
+} hmp_dwcompensation;
+#endif
+
 /* Global switch between power-aware migrations and classical GTS. */
 static unsigned int hmp_power_migration = 1;
 
