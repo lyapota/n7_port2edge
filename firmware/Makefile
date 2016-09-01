@@ -141,6 +141,9 @@ fw-shipped-$(CONFIG_VIDEO_CPIA2) += cpia2/stv0672_vp4.bin
 fw-shipped-$(CONFIG_YAM) += yam/1200.bin yam/9600.bin
 
 fw-shipped-$(CONFIG_CCIC_S2MM003) += usbpd/USB_PD_FULL_DRIVER.bin
+fw-shipped-$(CONFIG_CCIC_S2MM005) += usbpd/s2mm005.bin
+
+fw-shipped-$(CONFIG_EPEN_WACOM_W9018) += epen/W9018_GRACE.bin
 
 fw-shipped-$(CONFIG_TOUCHSCREEN_FTS) += tsp_stm/stm_z1.fw tsp_stm/stm_z2a.fw
 fw-shipped-$(CONFIG_TOUCHSCREEN_FTS7) += tsp_stm/stm_z1.fw tsp_stm/stm_z2a.fw tsp_stm/hero2i.fw \
@@ -148,14 +151,16 @@ fw-shipped-$(CONFIG_TOUCHSCREEN_FTS7) += tsp_stm/stm_z1.fw tsp_stm/stm_z2a.fw ts
 
 fw-shipped-$(CONFIG_TOUCHSCREEN_SEC_TS) += tsp_sec/hero.bin
 fw-shipped-$(CONFIG_TOUCHSCREEN_SEC_TS) += tsp_sec/hero_ub.bin tsp_sec/hero2la.bin
+fw-shipped-$(CONFIG_TOUCHSCREEN_SEC_TS) += tsp_sec/y661_grace.fw
 
 fw-shipped-$(CONFIG_TOUCHSCREEN_SYNAPTICS_I2C_DSX2) += tsp_synaptics/synaptics_s5300_v_ab.fw \
 	tsp_synaptics/synaptics_s5300_v_ac.fw
 fw-shipped-$(CONFIG_TOUCHSCREEN_SYNAPTICS_I2C_DSX) += tsp_synaptics/synaptics_s5100_haechi.fw
 
-fw-shipped-$(CONFIG_KEYBOARD_CYPRESS_TOUCH_MBR31X5) += cypress/cypress_zerof.fw
+fw-shipped-$(CONFIG_KEYBOARD_CYPRESS_TOUCH_MBR31X5) += cypress/cy8cmbr3145_grace.fw
 fw-shipped-$(CONFIG_KEYBOARD_ABOV_FT16XX_TOUCH) += abov/abov_hero.fw abov/abov_hero2.fw abov/abov_valley.fw
-fw-shipped-$(CONFIG_KEYBOARD_ABOV_FT16XX_TOUCH_VALLEY) += abov/abov_valley.fw abov/abov_valley_sub.fw
+fw-shipped-$(CONFIG_KEYBOARD_ABOV_FT16XX_TOUCH_VALLEY) += abov/abov_valley.fw abov/abov_valley_sub.fw \
+								abov/abov_vjf.fw abov/abov_vjf_sub.fw
 fw-shipped-all := $(fw-shipped-y) $(fw-shipped-m) $(fw-shipped-)
 
 quiet_cmd_ihex  = IHEX    $@
