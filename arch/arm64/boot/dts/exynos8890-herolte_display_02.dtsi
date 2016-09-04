@@ -33,6 +33,7 @@
 		disp_type_gpio = <&gpi2 2 0x0>;
 		regulator_30V = "vdd_3p0_ddi";
 		regulator_18V = "vdd_1p8_ddi";
+		regulator_16V = "vdd_1p6_ddr";
 	};
 
 };

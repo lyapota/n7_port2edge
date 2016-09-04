@@ -12,7 +12,7 @@
 #
 ###################### CONFIG ######################
 
-[ "$1" ] && MODEL=$1
+[ "$1" ] && MODEL=gracelte
 [ "$MODEL" ] || MODEL=grace2lte
 [ "$2" ] && VARIANT=$2
 [ "$VARIANT" ] || VARIANT=xx
