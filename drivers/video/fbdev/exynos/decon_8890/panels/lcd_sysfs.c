@@ -1510,8 +1510,10 @@ static ssize_t resolution_store(struct device *dev,
 
 	for( i=0; i<ARRAY_SIZE(dsu_config); i++ ) {
 		if( !strncmp(dsu_config[i].id_str, buf, strlen(dsu_config[i].id_str)) ) {
+#ifdef CM_OFFSET
 			ret = sec_set_param((unsigned long) dsu_param_offset, dsu_config[i].value);
 			pr_info( "%s:%s,%d,%d\n", __func__, dsu_config[i].id_str, dsu_config[i].value, ret );
+#endif
 			return size;
 		}
 	}

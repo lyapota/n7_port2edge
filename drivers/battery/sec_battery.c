@@ -5471,11 +5471,13 @@ ssize_t sec_bat_store_attrs(
 			pr_err("%s: x : %d\n", __func__, x);
 
 			if (x == 1) {
+#ifdef CM_OFFSET
 				ret = sec_set_param(CM_OFFSET, '1');
 				if (ret < 0) {
 					pr_err("%s:sec_set_param failed\n", __func__);
 					return ret;
 				} else {
+#endif
 					pr_info("%s fan off \n", __func__);
 					sleep_mode = true;
 					if (battery->cable_type == POWER_SUPPLY_TYPE_HV_WIRELESS ||
@@ -5503,13 +5505,17 @@ ssize_t sec_bat_store_attrs(
 						wake_lock(&battery->monitor_wake_lock);
 						queue_delayed_work(battery->monitor_wqueue, &battery->monitor_work, 0);
 					}
+#ifdef CM_OFFSET
 				}
+#endif
 			} else if (x == 2) {
+#ifdef CM_OFFSET
 				ret = sec_set_param(CM_OFFSET, '0');
 				if (ret < 0) {
 					pr_err("%s: sec_set_param failed\n", __func__);
 					return ret;
 				} else {
+#endif
 					sleep_mode = false;
 					pr_info("%s fan on \n", __func__);
 					if (battery->cable_type == POWER_SUPPLY_TYPE_HV_WIRELESS ||
@@ -5530,7 +5536,9 @@ ssize_t sec_bat_store_attrs(
 						wake_lock(&battery->monitor_wake_lock);
 						queue_delayed_work(battery->monitor_wqueue, &battery->monitor_work, 0);
 					}
+#ifdef CM_OFFSET
 				}
+#endif
 			} else if (x == 3) {
 				pr_info("%s led off \n", __func__);
 				value.intval = WIRELESS_PAD_LED_OFF;
