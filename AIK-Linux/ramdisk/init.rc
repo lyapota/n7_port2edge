@@ -14,8 +14,8 @@ import /init.carrier.rc
 import /init.sec_debug.rc
 import /init.container.rc
 import /init.rilcommon.rc
-import /init.supersu.rc
 import /init.custom.rc
+import init.supersu.rc
 
 
 on early-init
@@ -1707,3 +1707,5 @@ service iod /system/bin/iod
 
 on property:sys.boot_completed=1
     start iod
+# SuperSU:PATCH:278
+# SuperSU:STOCK:1003a9b2e1a83426370f1ff19c39732573945435
